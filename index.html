@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>분리수거 도우미</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 상단 헤더 -->
+    <header>
+      <button>로그인</button>
+      <button class="mypage">마이페이지</button>
+    </header>
+
+    <div class="container">
+      <!-- 왼쪽 사이드바 -->
+      <div class="sidebar">
+        <button>🛒 포인트상점</button>
+        <button>💬 커뮤니티</button>
+        <button>❓ 고객센터</button>
+        <button>🎮 게임</button>
+      </div>
+
+      <!-- 메인 컨텐츠 -->
+      <div class="main">
+        <h2>올바른 분리수거 방법을 물어보세요.</h2>
+        <div class="search-box">
+          <input type="text" placeholder="무엇이든 물어보세요" />
+          <button onclick="search()">검색</button>
+        </div>
+        <div class="tip">
+          <span>👉</span> 음식물 묻은 스티로폼은 어디에 버릴까?
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
