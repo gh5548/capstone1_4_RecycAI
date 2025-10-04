@@ -1,5 +1,6 @@
 const mainContent = document.getElementById('MainContent');
 const shopBtn = document.getElementById('shopBTN');
+const Logo = document.getElementById('Logo');
 
 // 기본 검색창 UI
 const searchUI = `
@@ -49,6 +50,10 @@ function exchange(price, name) {
 // 버튼 이벤트
 shopBtn.addEventListener('click', () => {
   mainContent.innerHTML = shopUI;
+});
+
+Logo.addEventListener('click', () => {
+  mainContent.innerHTML = searchUI;
 });
 
 // 새로고침 시 기본 검색창 유지
