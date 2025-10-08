@@ -1,6 +1,7 @@
 const mainContent = document.getElementById('MainContent');
 const shopBtn = document.getElementById('shopBTN');
 const Logo = document.getElementById('Logo');
+const gameBtn = document.getElementById('gameBTN');
 
 // 기본 검색창 UI
 const searchUI = `
@@ -34,6 +35,24 @@ const shopUI = `
   </div>
 `;
 
+const gameUI = `
+  <h2>게임</h2>
+  <div class="game-grid">
+    <div class="game-card">
+      <img src="" alt="게임1">
+      <h3>gmae1</h3>
+    </div>
+    <div class="game-card">
+      <img src="" alt="게임2">
+      <h3>game2</h3>
+    </div>
+    <div class="game-card">
+      <img src="" alt="게임3">
+      <h3>game3</h3>
+    </div>
+  </div>
+`;
+
 let userPoint = 1250;
 
 // 포인트 차감 함수
@@ -47,11 +66,12 @@ function exchange(price, name) {
   }
 }
 
-// 버튼 이벤트
+//포인트 상점 버튼 이벤트
 shopBtn.addEventListener('click', () => {
   mainContent.innerHTML = shopUI;
 });
 
+//로고를 눌렀을 때 검색창으로 가기
 Logo.addEventListener('click', () => {
   mainContent.innerHTML = searchUI;
 });
@@ -59,4 +79,9 @@ Logo.addEventListener('click', () => {
 // 새로고침 시 기본 검색창 유지
 window.addEventListener('load', () => {
   mainContent.innerHTML = searchUI;
+});
+
+//게임 버틑 이벤트
+gameBtn.addEventListener('click', () => {
+  mainContent.innerHTML = gameUI;
 });
