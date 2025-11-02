@@ -8,30 +8,145 @@
   <body>
     <!-- 상단 헤더 -->
     <header>
-      <button>로그인</button>
-      <button class="mypage">마이페이지</button>
+      <div class="logo">
+        <img src="image/logo.png" alt="분리수거 도우미 로고" id="Logo" />
+      </div>
+      <div class="header-buttons">
+        <button class="login">로그인</button>
+        <button class="mypage">마이페이지</button>
+      </div>
     </header>
 
     <div class="container">
       <!-- 왼쪽 사이드바 -->
-      <div class="sidebar">
-        <button>🛒 포인트상점</button>
-        <button>💬 커뮤니티</button>
+      <aside class="sidebar">
+        <button id="shopBTN">🛒 포인트상점</button>
+        <button id="communityBTN">💬 커뮤니티</button>
         <button>❓ 고객센터</button>
-        <button>🎮 게임</button>
-      </div>
+        <button id="gameBTN">🎮 게임</button>
+      </aside>
 
       <!-- 메인 컨텐츠 -->
-      <div class="main">
-        <h2>올바른 분리수거 방법을 물어보세요.</h2>
-        <div class="search-box">
-          <input type="text" placeholder="무엇이든 물어보세요" />
-          <button onclick="search()">검색</button>
-        </div>
-        <div class="tip">
-          <span>👉</span> 음식물 묻은 스티로폼은 어디에 버릴까?
-        </div>
-      </div>
+      <main class="main" id="MainContent">
+        <!-- 검색 페이지 -->
+        <section id="searchPage" class="page">
+          <h2>올바른 분리수거 방법을 물어보세요.</h2>
+          <div class="search-box">
+            <input
+              type="text"
+              placeholder="무엇이든 물어보세요"
+              id="searchInput"
+            />
+            <button id="searchBtn">검색</button>
+          </div>
+          <div class="tip">
+            <span>👉</span> 음식물 묻은 스티로폼은 어디에 버릴까?
+          </div>
+        </section>
+
+        <!-- 포인트 상점 -->
+        <section id="shopPage" class="page" style="display: none">
+          <h2>포인트 상점</h2>
+          <p>내 포인트: <span id="userPoint">1250</span>P</p>
+          <div class="shop-grid">
+            <div class="item-card" data-price="700" data-name="스타벅스 쿠폰">
+              <img src="image/coffee.png" alt="스타벅스 쿠폰" />
+              <h3>스타벅스 쿠폰</h3>
+              <p class="price">700P</p>
+              <button class="exchange-btn">교환하기</button>
+            </div>
+            <div class="item-card" data-price="100" data-name="재활용 봉투">
+              <img src="image/recycle.png" alt="재활용 봉투" />
+              <h3>재활용 봉투</h3>
+              <p class="price">100P</p>
+              <button class="exchange-btn">교환하기</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 커뮤니티 -->
+        <section id="communityPage" class="page" style="display: none">
+          <h2>💬 커뮤니티</h2>
+          <div class="write-btn-box">
+            <button id="writePostBtn">✏️ 글쓰기</button>
+          </div>
+
+          <div id="postList">
+            <table class="community-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px">탭</th>
+                  <th style="text-align: left">제목</th>
+                  <th style="width: 120px">글쓴이</th>
+                  <th style="width: 100px">날짜</th>
+                  <th style="width: 80px">조회</th>
+                  <th style="width: 60px">추천</th>
+                </tr>
+              </thead>
+              <tbody id="postTableBody">
+                <tr>
+                  <td class="category notice">공지</td>
+                  <td class="title">
+                    <a href="#">커뮤니티 게시판 오픈 안내</a>
+                  </td>
+                  <td>관리자</td>
+                  <td>2025-11-02</td>
+                  <td>1523</td>
+                  <td>21</td>
+                </tr>
+                <tr>
+                  <td class="category talk">잡담</td>
+                  <td class="title">
+                    <a href="#">오늘 날씨 진짜 좋네요 😄</a>
+                  </td>
+                  <td>행복</td>
+                  <td>13:42</td>
+                  <td>87</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="writeForm" class="write-form hidden">
+            <h3>게시판 - 글쓰기</h3>
+            <div class="form-group">
+              <label for="postTitle">* 제목</label>
+              <input
+                type="text"
+                id="postTitle"
+                placeholder="제목을 입력하세요"
+              />
+            </div>
+            <div class="form-group">
+              <label for="postContent">* 내용</label>
+              <textarea
+                id="postContent"
+                placeholder="내용을 입력하세요"
+                rows="15"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="postFile">첨부파일</label>
+              <input type="file" id="postFile" />
+            </div>
+            <div class="form-group buttons">
+              <button id="savePost" class="save-btn">저장</button>
+              <button id="cancelPost" class="cancel-btn">목록</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 게임 페이지 -->
+        <section id="gamePage" class="page" style="display: none">
+          <h2>게임</h2>
+          <div class="game-grid">
+            <div class="game-card"><h3>game1</h3></div>
+            <div class="game-card"><h3>game2</h3></div>
+            <div class="game-card"><h3>game3</h3></div>
+          </div>
+        </section>
+      </main>
     </div>
 
     <script src="script.js"></script>
