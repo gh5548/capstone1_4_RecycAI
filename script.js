@@ -1,87 +1,101 @@
-const mainContent = document.getElementById('MainContent');
-const shopBtn = document.getElementById('shopBTN');
+// ======================
+// DOM 요소 선택
+// ======================
+const pages = document.querySelectorAll('.page');
 const Logo = document.getElementById('Logo');
+const shopBtn = document.getElementById('shopBTN');
 const gameBtn = document.getElementById('gameBTN');
+const communityBtn = document.getElementById('communityBTN');
 
-// 기본 검색창 UI
-const searchUI = `
-  <h2>올바른 분리수거 방법을 물어보세요.</h2>
-  <div class="search-box">
-    <input type="text" placeholder="무엇이든 물어보세요" />
-    <button onclick="search()">검색</button>
-  </div>
-  <div class="tip">
-    <span>👉</span> 음식물 묻은 스티로폼은 어디에 버릴까?
-  </div>
-`;
-
-// 포인트 상점 UI
-const shopUI = `
-  <h2>포인트 상점</h2>
-  <p>내 포인트: <span id="userPoint">1250</span>P</p>
-  <div class="shop-grid">
-    <div class="item-card">
-      <img src="image/coffee.png" alt="상품1">
-      <h3>스타벅스 쿠폰</h3>
-      <p class="price">700P</p>
-      <button class="exchange-btn" onclick="exchange(700, '스타벅스 쿠폰')">교환하기</button>
-    </div>
-    <div class="item-card">
-      <img src="image/recycle.png" alt="상품2">
-      <h3>재활용 봉투</h3>
-      <p class="price">100P</p>
-      <button class="exchange-btn" onclick="exchange(100, '편의점 상품권')">교환하기</button>
-    </div>
-  </div>
-`;
-
-const gameUI = `
-  <h2>게임</h2>
-  <div class="game-grid">
-    <div class="game-card">
-      <img src="" alt="게임1">
-      <h3>gmae1</h3>
-    </div>
-    <div class="game-card">
-      <img src="" alt="게임2">
-      <h3>game2</h3>
-    </div>
-    <div class="game-card">
-      <img src="" alt="게임3">
-      <h3>game3</h3>
-    </div>
-  </div>
-`;
-
+const userPointEl = document.getElementById('userPoint');
 let userPoint = 1250;
 
-// 포인트 차감 함수
-function exchange(price, name) {
-  if (userPoint >= price) {
-    userPoint -= price;
-    document.getElementById('userPoint').textContent = userPoint;
-    alert(`${name} 교환 완료!`);
-  } else {
-    alert('포인트가 부족합니다.');
-  }
+// 커뮤니티 관련
+const writePostBtn = document.getElementById('writePostBtn');
+const postList = document.getElementById('postList');
+const writeForm = document.getElementById('writeForm');
+const savePost = document.getElementById('savePost');
+const cancelPost = document.getElementById('cancelPost');
+const postTableBody = document.getElementById('postTableBody');
+
+// ======================
+// 페이지 전환
+// ======================
+function showPage(pageId) {
+  pages.forEach((page) => (page.style.display = 'none'));
+  document.getElementById(pageId).style.display = 'block';
 }
 
-//포인트 상점 버튼 이벤트
-shopBtn.addEventListener('click', () => {
-  mainContent.innerHTML = shopUI;
+const pageButtons = [
+  { btn: Logo, page: 'searchPage' },
+  { btn: shopBtn, page: 'shopPage' },
+  { btn: gameBtn, page: 'gamePage' },
+  { btn: communityBtn, page: 'communityPage' },
+];
+
+pageButtons.forEach(({ btn, page }) => {
+  btn.addEventListener('click', () => showPage(page));
 });
 
-//로고를 눌렀을 때 검색창으로 가기
-Logo.addEventListener('click', () => {
-  mainContent.innerHTML = searchUI;
+// 첫 로드 시 검색 페이지 보여주기
+window.addEventListener('load', () => showPage('searchPage'));
+
+// ======================
+// 포인트 교환
+// ======================
+document.querySelectorAll('.exchange-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const itemCard = btn.closest('.item-card');
+    const price = parseInt(itemCard.dataset.price);
+    const name = itemCard.dataset.name;
+    if (userPoint >= price) {
+      userPoint -= price;
+      userPointEl.textContent = userPoint;
+      alert(`${name} 교환 완료!`);
+    } else {
+      alert('포인트가 부족합니다.');
+    }
+  });
 });
 
-// 새로고침 시 기본 검색창 유지
-window.addEventListener('load', () => {
-  mainContent.innerHTML = searchUI;
-});
+// ======================
+// 커뮤니티 글쓰기
+// ======================
+function toggleWriteForm(show = true) {
+  writeForm.style.display = show ? 'block' : 'none';
+  postList.style.display = show ? 'none' : 'block';
+}
 
-//게임 버틑 이벤트
-gameBtn.addEventListener('click', () => {
-  mainContent.innerHTML = gameUI;
+writePostBtn.addEventListener('click', () => toggleWriteForm(true));
+cancelPost.addEventListener('click', () => toggleWriteForm(false));
+
+savePost.addEventListener('click', () => {
+  const title = document.getElementById('postTitle').value.trim();
+  const content = document.getElementById('postContent').value.trim();
+
+  if (!title || !content) {
+    alert('제목과 내용을 모두 입력해주세요!');
+    return;
+  }
+
+  const newRow = postTableBody.insertRow(0);
+  const cells = [
+    { className: 'category talk', content: '잡담' },
+    { className: 'title', content: `<a href="#">${title}</a>` },
+    { className: '', content: '익명' },
+    { className: '', content: new Date().toLocaleString() },
+    { className: '', content: '0' },
+    { className: '', content: '0' },
+  ];
+
+  cells.forEach((cell, idx) => {
+    const newCell = newRow.insertCell(idx);
+    newCell.className = cell.className;
+    newCell.innerHTML = cell.content;
+  });
+
+  // 입력 초기화 및 목록으로 복귀
+  document.getElementById('postTitle').value = '';
+  document.getElementById('postContent').value = '';
+  toggleWriteForm(false);
 });
