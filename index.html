@@ -84,31 +84,24 @@
                 </tr>
               </thead>
               <tbody id="postTableBody">
-                <tr>
+                <tr
+                  class="notice-row"
+                  style="background: #fffbe6; font-weight: bold"
+                >
                   <td class="category notice">공지</td>
                   <td class="title">
-                    <a href="#">커뮤니티 게시판 오픈 안내</a>
+                    <a href="#" class="post-link">📢 커뮤니티 이용 안내</a>
                   </td>
                   <td>관리자</td>
-                  <td>2025-11-02</td>
-                  <td>1523</td>
-                  <td>21</td>
-                </tr>
-                <tr>
-                  <td class="category talk">잡담</td>
-                  <td class="title">
-                    <a href="#">오늘 날씨 진짜 좋네요 😄</a>
-                  </td>
-                  <td>행복</td>
-                  <td>13:42</td>
-                  <td>87</td>
-                  <td>3</td>
+                  <td>2025-11-01 12:00</td>
+                  <td>999</td>
+                  <td>50</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div id="writeForm" class="write-form hidden">
+          <div id="writeForm" style="display: none">
             <h3>게시판 - 글쓰기</h3>
 
             <!-- 제목 -->
@@ -134,6 +127,7 @@
                   <option value="18px">18px</option>
                   <option value="20px">20px</option>
                 </select>
+
                 <button type="button" onclick="format('bold')"><b>B</b></button>
                 <button type="button" onclick="format('italic')">
                   <i>I</i>
@@ -141,6 +135,7 @@
                 <button type="button" onclick="format('underline')">
                   <u>U</u>
                 </button>
+
                 <button type="button" onclick="format('justifyLeft')">
                   좌
                 </button>
@@ -150,13 +145,12 @@
                 <button type="button" onclick="format('justifyRight')">
                   우
                 </button>
+
                 <input type="color" id="fontColor" title="글자색" />
               </div>
 
-              <!-- 실제 편집 영역 -->
               <div id="editor" contenteditable="true" class="editor"></div>
             </div>
-
             <!-- 첨부파일 -->
             <div class="form-group">
               <label for="postFile">첨부파일</label>

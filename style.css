@@ -1,10 +1,20 @@
 /* ==========================
 공통 스타일
 ========================== */
+:root {
+  --color-primary: #00bcd4;
+  --color-secondary: #4caf50;
+  --color-accent: #ffc107;
+  --color-light: #f5f5f5;
+  --color-border: #ddd;
+  --radius: 6px;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
 body {
   margin: 0;
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f5f5f5;
+  background-color: var(--color-light);
 }
 
 /* ==========================
@@ -15,30 +25,30 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-border);
   background-color: #fff;
 }
 
 header .logo img {
   height: 100px;
-  width: auto;
-  cursor: pointer; /* 홈 이동 UX */
+  cursor: pointer;
 }
 
-header .header-buttons button {
+.header-buttons button {
   padding: 10px 18px;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: none;
   cursor: pointer;
   color: #fff;
   font-weight: bold;
 }
 
-header .header-buttons .login {
+.header-buttons .login {
   background: #077bff;
 }
-header .header-buttons .mypage {
+
+.header-buttons .mypage {
   background: #00c4cc;
 }
 
@@ -51,7 +61,6 @@ header .header-buttons .mypage {
   padding: 0 20px;
 }
 
-/* 사이드바 */
 .sidebar {
   width: 180px;
   display: flex;
@@ -62,27 +71,24 @@ header .header-buttons .mypage {
 .sidebar button {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 8px;
   padding: 12px;
-  border: none;
-  background: #00bcd4;
+  background: var(--color-primary);
   color: #fff;
-  font-size: 15px;
-  border-radius: 6px;
-  cursor: pointer;
   font-weight: bold;
-  text-align: left;
+  font-size: 15px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
 }
 
-/* 메인 컨텐츠 */
 .main {
   flex: 1;
   margin-left: 20px;
   background: #fff;
   border-radius: 10px;
   padding: 40px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .main h2 {
@@ -104,7 +110,7 @@ header .header-buttons .mypage {
   width: 300px;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   background: #d9ffb3;
   outline: none;
 }
@@ -113,7 +119,7 @@ header .header-buttons .mypage {
   padding: 12px 18px;
   border-radius: 20px;
   border: none;
-  background: #ffc107;
+  background: var(--color-accent);
   cursor: pointer;
   font-weight: bold;
 }
@@ -133,10 +139,6 @@ header .header-buttons .mypage {
 /* ==========================
 포인트 상점
 ========================== */
-.write-form.hidden {
-  display: none;
-}
-
 .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -149,7 +151,7 @@ header .header-buttons .mypage {
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .item-card img {
@@ -172,9 +174,9 @@ header .header-buttons .mypage {
   background: #4fc3f7;
   border: none;
   padding: 8px 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
-  color: white;
+  color: #fff;
   font-weight: bold;
 }
 
@@ -197,7 +199,7 @@ header .header-buttons .mypage {
   height: 340px;
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -233,13 +235,14 @@ header .header-buttons .mypage {
 }
 
 .write-btn-box button {
-  background: #4caf50;
-  border: none;
+  background: var(--color-secondary);
   color: #fff;
   padding: 10px 16px;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: var(--radius);
+  border: none;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .write-btn-box button:hover {
@@ -257,8 +260,7 @@ header .header-buttons .mypage {
 .community-table th {
   background: #f1f1f1;
   padding: 10px;
-  border-bottom: 2px solid #ddd;
-  text-align: center;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .community-table td {
@@ -314,7 +316,7 @@ header .header-buttons .mypage {
 }
 
 .pagination button.active {
-  background: #4caf50;
+  background: var(--color-secondary);
   color: #fff;
   border: none;
 }
@@ -323,26 +325,31 @@ header .header-buttons .mypage {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 /* ==========================
 글쓰기 툴바 및 편집기
 ========================== */
 .editor-toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   background: #f1f1f1;
   border: 1px solid #ccc;
-  padding: 6px;
   border-radius: 6px 6px 0 0;
+  padding: 6px;
 }
 
 .editor-toolbar button {
-  background: #fff;
+  background: #eee;
   border: 1px solid #ccc;
-  cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 14px;
+  cursor: pointer;
+}
+
+.editor-toolbar button:hover {
+  background: #ddd;
 }
 
 .editor-toolbar select,
@@ -355,10 +362,11 @@ header .header-buttons .mypage {
 .editor {
   border: 1px solid #ccc;
   border-top: none;
-  min-height: 300px;
-  padding: 10px;
-  background: #fff;
   border-radius: 0 0 6px 6px;
-  font-size: 16px;
+  background: #fff;
+  padding: 10px;
+  min-height: 250px;
+  max-height: 400px;
   overflow-y: auto;
+  font-size: 16px;
 }
