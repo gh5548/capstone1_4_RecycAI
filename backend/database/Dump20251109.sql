@@ -83,14 +83,16 @@ DROP TABLE IF EXISTS `user_tb`;
 CREATE TABLE `user_tb` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `point` int NOT NULL DEFAULT '0',
   `name` varchar(45) NOT NULL,
   `nickname` varchar(45) NOT NULL,
+  `phone` varchar(45) NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `deleted_at` datetime NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,6 +101,7 @@ CREATE TABLE `user_tb` (
 
 LOCK TABLES `user_tb` WRITE;
 /*!40000 ALTER TABLE `user_tb` DISABLE KEYS */;
+INSERT INTO `user_tb` VALUES (1,'test@test.com','1234',0,'홍길동','길동이','010-1234-5678',NULL,'2025-11-09 00:43:39','9999-12-31 23:59:59'),(2,'test@tesst.com','$2b$12$TJ9XgWA73jCwkgjwNL6tqOxPoccAqBNliMJbBB8JhE1zQPELcfquG',0,'홍길동','길동이','010-1234-5678',NULL,'2025-11-09 01:00:08','9999-12-31 23:59:59'),(3,'test@tesst1.com','$2b$12$CTW8NBGd2iuEePi3belDYOb4Efb5s2uiFodrEW2hBb8.yoG3nu2Pa',0,'홍길동','길동이','010-1234-5678',NULL,'2025-11-09 01:08:49','9999-12-31 23:59:59');
 /*!40000 ALTER TABLE `user_tb` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -111,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-08 16:22:55
+-- Dump completed on 2025-11-09  1:09:55
