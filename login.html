@@ -133,7 +133,7 @@
     </div>
 
     <script>
-      function login() {
+      async function login() { // 실제 호출 위해 async 추가했음
         const id = document.getElementById('loginId').value.trim();
         const pw = document.getElementById('loginPw').value.trim();
 
@@ -142,15 +142,54 @@
           return;
         }
 
-        // 임시 로그인 예시
-        if (id === "1234" && pw === "1234") {
-          alert("로그인 성공!");
-          localStorage.setItem("loginUser", id);
-          location.href = "index.html";
-        } else {
-          alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+        // 임시 로그인
+        // if (id === "1234" && pw === "1234") {
+        //   alert("로그인 성공!");
+        //   localStorage.setItem("loginUser", id);
+        //   location.href = "index.html";
+        //   return;
+        // } else {
+        //   alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+        //   return;
+        // }
+        //
+
+        try { // 백엔드 로그인 호출 ---- 프론트에서 보고 이상하다 싶으면 수정하시면 됩니당
+          const res = await fetch("/auth/login", { // 같은 도메인/포트에서 서빙되므로 상대경로 사용함
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: id, password: pw })
+          });
+
+          if (!res.ok) {
+            // FastAPI 에러 본문을 그대로 띄우되, 비어있으면 기본 메시지 나오게함
+            const text = await res.text().catch(() => "");
+            alert(text || "로그인 요청 실패");
+            return;
+          }
+
+          const data = await res.json();
+
+          if (data.ok) {
+            alert(data.message || "로그인 성공!");
+            // 로그인 상태 저장
+            localStorage.setItem("loginUser", id);
+            localStorage.setItem("userId", data.user_id);
+            if (data.nickname) localStorage.setItem("nickname", data.nickname);
+            location.href = "index.html";
+          } else {
+            alert(data.message || "아이디 또는 비밀번호가 올바르지 않습니다.");
+          }
+        } catch (e) {
+          console.error(e);
+          alert("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
       }
+
+      // Enter로 로그인
+      document.getElementById('loginPw').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') login();
+      });
     </script>
   </body>
 </html>

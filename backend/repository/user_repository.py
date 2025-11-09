@@ -5,6 +5,7 @@ from datetime import datetime
 def get_user_by_email(email: str):
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor(dictionary=True)
+    cursor.execute("SET NAMES utf8mb4")  #utf8mb4: db로 옮길때 한글 자꾸 깨져서 추가했습니다
     cursor.execute(
         "SELECT * FROM user_tb WHERE email=%s AND deleted_at='9999-12-31 23:59:59'", 
         (email,)
@@ -22,6 +23,7 @@ def create_user(user: dict):
 
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
+    cursor.execute("SET NAMES utf8mb4")
     sql = """
         INSERT INTO user_tb 
         (email, password, name, nickname, phone, profile_image, point, created_at, deleted_at)
