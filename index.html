@@ -13,8 +13,12 @@
       </div>
       <div class="header-buttons">
         <!-- ✅ 로그인 클릭 시 login.html로 이동하도록 수정 -->
-        <button class="login" onclick="location.href='login.html'">로그인</button>
-        <button class="mypage" onclick="location.href='mypage.html'">마이페이지</button>
+        <button class="login" onclick="location.href='login.html'">
+          로그인
+        </button>
+        <button class="mypage" onclick="location.href='mypage.html'">
+          마이페이지
+        </button>
       </div>
     </header>
 
@@ -191,7 +195,16 @@
         <section id="gamePage" class="page" style="display: none">
           <h2>게임</h2>
           <div class="game-grid">
-            <div class="game-card"><h3>game1</h3></div>
+            <div
+              class="game-card"
+              onclick="location.href='drag&drop_game.html'"
+            >
+              <h3>drag&drop_game</h3>
+              <img
+                src="image/drag&drop_game.png"
+                style="width: 100%; height: auto"
+              />
+            </div>
             <div class="game-card"><h3>game2</h3></div>
             <div class="game-card"><h3>game3</h3></div>
           </div>

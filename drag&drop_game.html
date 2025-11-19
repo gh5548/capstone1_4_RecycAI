@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>분리수거 드래그 게임 (결과화면 포함)</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Noto Sans KR', sans-serif;
+        background: linear-gradient(135deg, #a8edea, #fed6e3);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #gameContainer {
+        width: 900px;
+        height: 600px;
+        background: rgba(255, 255, 255, 0.65);
+        border-radius: 25px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      #topBar {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 25px;
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      #score {
+        color: #333;
+      }
+      #timer {
+        color: #ff5555;
+      }
+
+      /* 쓰레기 스타일 */
+      .trash {
+        position: absolute;
+        cursor: grab;
+        user-select: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 12px;
+        padding: 2px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .trash img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        border-radius: 10px;
+      }
+
+      .trash:active {
+        cursor: grabbing;
+        transform: scale(1.2);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      }
+
+      /* 쓰레기통 디자인 */
+      #bins {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+      }
+
+      .bin {
+        width: 120px;
+        height: 160px;
+        background: #ccc;
+        border-radius: 15px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.2),
+          0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s;
+        cursor: pointer;
+      }
+
+      .bin:hover {
+        transform: scale(1.05);
+      }
+      .bin::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        width: 80%;
+        height: 20px;
+        background: linear-gradient(145deg, #aaa, #888);
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        transition: top 0.2s;
+      }
+      .bin:hover::before {
+        top: -25px;
+      }
+      .bin div {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 16px;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+
+      /* 점수 애니메이션 */
+      .scoreAnim {
+        position: absolute;
+        font-size: 30px;
+        font-weight: bold;
+        animation: floatUp 1s forwards;
+        pointer-events: none;
+      }
+      @keyframes floatUp {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+      }
+
+      /* 결과 화면 모달 */
+      #resultModal {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+      }
+
+      #resultContent {
+        background: #fff;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        width: 400px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      #resultContent h1 {
+        margin: 0 0 20px;
+        font-size: 32px;
+        color: #333;
+      }
+
+      #finalScore {
+        font-size: 28px;
+        margin-bottom: 30px;
+        color: #ff5555;
+      }
+
+      .resultBtn {
+        padding: 12px 25px;
+        margin: 0 10px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        color: #fff;
+        transition: background 0.3s;
+      }
+
+      #retryBtn {
+        background: #4caf50;
+      }
+      #retryBtn:hover {
+        background: #45a049;
+      }
+
+      #homeBtn {
+        background: #ff5555;
+      }
+      #homeBtn:hover {
+        background: #e04848;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gameContainer">
+      <div id="topBar">
+        <div id="score">점수: 0</div>
+        <div id="timer">30</div>
+      </div>
+
+      <div id="bins">
+        <div class="bin" data-type="plastic"><div>플라스틱</div></div>
+        <div class="bin" data-type="paper"><div>종이류</div></div>
+        <div class="bin" data-type="glass"><div>유리류</div></div>
+        <div class="bin" data-type="can"><div>캔류</div></div>
+        <div class="bin" data-type="styrofoam"><div>스티로폼류</div></div>
+        <div class="bin" data-type="vinyl"><div>비닐류</div></div>
+        <div class="bin" data-type="general"><div>일반쓰레기</div></div>
+      </div>
+
+      <!-- 결과 모달 -->
+      <div id="resultModal">
+        <div id="resultContent">
+          <h1>게임 종료!</h1>
+          <div id="finalScore">점수: 0</div>
+          <button class="resultBtn" id="retryBtn">다시하기</button>
+          <button class="resultBtn" id="homeBtn">돌아가기</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const trashList = [
+        { img: 'image/plasticbottle.png', type: 'plastic' },
+        { img: 'image/plasticbin.png', type: 'plastic' },
+        { img: 'image/paperbox.png', type: 'paper' },
+        { img: 'image/newspaper.png', type: 'paper' },
+        { img: 'image/glassbottle.png', type: 'glass' },
+        { img: 'image/glasscup.png', type: 'glass' },
+        { img: 'image/tincan.png', type: 'can' },
+        { img: 'image/can.png', type: 'can' },
+        { img: 'image/styrofoam.png', type: 'styrofoam' },
+        { img: 'image/styrofoambox.png', type: 'styrofoam' },
+        { img: 'image/snack.png', type: 'vinyl' },
+        { img: 'image/vinyl.png', type: 'vinyl' },
+        { img: 'image/bone.png', type: 'general' },
+        { img: 'image/tissue.png', type: 'general' },
+      ];
+
+      let score = 0;
+      let time = 30;
+      let gameOver = false;
+      let timer;
+
+      function playSound(src) {
+        const sound = new Audio(src); // 새 오디오 객체 생성
+        sound.volume = 0.7;
+        sound.play();
+      }
+
+      function spawnTrash() {
+        if (gameOver) return;
+        const t = trashList[Math.floor(Math.random() * trashList.length)];
+        const div = document.createElement('div');
+        div.className = 'trash ' + t.type;
+        div.dataset.type = t.type;
+
+        const img = document.createElement('img');
+        img.src = t.img;
+        div.appendChild(img);
+
+        div.style.left = Math.random() * 800 + 'px';
+        div.style.top = Math.random() * 200 + 100 + 'px';
+        document.getElementById('gameContainer').appendChild(div);
+        enableDrag(div);
+      }
+
+      function enableDrag(el) {
+        if (gameOver) return;
+        let offsetX, offsetY;
+        el.addEventListener('mousedown', (e) => {
+          offsetX = e.clientX - el.offsetLeft;
+          offsetY = e.clientY - el.offsetTop;
+
+          function move(e) {
+            el.style.left = e.clientX - offsetX + 'px';
+            el.style.top = e.clientY - offsetY + 'px';
+          }
+
+          function stop() {
+            checkDrop(el);
+            document.removeEventListener('mousemove', move);
+            document.removeEventListener('mouseup', stop);
+          }
+
+          document.addEventListener('mousemove', move);
+          document.addEventListener('mouseup', stop);
+        });
+      }
+
+      function checkDrop(el) {
+        if (gameOver) return;
+        const bins = document.querySelectorAll('.bin');
+        bins.forEach((bin) => {
+          const rect1 = el.getBoundingClientRect();
+          const rect2 = bin.getBoundingClientRect();
+          const overlap = !(
+            rect1.right < rect2.left ||
+            rect1.left > rect2.right ||
+            rect1.bottom < rect2.top ||
+            rect1.top > rect2.bottom
+          );
+          if (overlap) {
+            if (el.dataset.type === bin.dataset.type) {
+              score++;
+              popScore(el, '+1', 'green');
+              playSound(
+                'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'
+              );
+              el.remove();
+              spawnTrash();
+            } else {
+              score--;
+              popScore(el, '-1', 'red');
+              playSound(
+                'https://assets.mixkit.co/active_storage/sfx/902/902-preview.mp3'
+              );
+            }
+            document.getElementById('score').textContent = `점수: ${score}`;
+          }
+        });
+      }
+
+      function popScore(el, text, color) {
+        const anim = document.createElement('div');
+        anim.className = 'scoreAnim';
+        anim.style.left = el.offsetLeft + 'px';
+        anim.style.top = el.offsetTop + 'px';
+        anim.style.color = color;
+        anim.textContent = text;
+        document.getElementById('gameContainer').appendChild(anim);
+        setTimeout(() => anim.remove(), 1000);
+      }
+
+      function endGame() {
+        gameOver = true;
+        clearInterval(timer);
+        document.querySelectorAll('.trash').forEach((t) => t.remove());
+        playSound(
+          'https://assets.mixkit.co/active_storage/sfx/2333/2333-preview.mp3'
+        );
+        document.getElementById('finalScore').textContent = '점수: ' + score;
+        document.getElementById('resultModal').style.visibility = 'visible';
+      }
+
+      function startGame() {
+        score = 0;
+        time = 30;
+        gameOver = false;
+        document.getElementById('score').textContent = `점수: ${score}`;
+        document.getElementById('timer').textContent = time;
+        document.getElementById('resultModal').style.visibility = 'hidden';
+
+        spawnTrash();
+        spawnTrash();
+        spawnTrash();
+
+        timer = setInterval(() => {
+          if (gameOver) return;
+          time--;
+          document.getElementById('timer').textContent = time;
+          if (time <= 0) endGame();
+        }, 1000);
+      }
+
+      document.getElementById('retryBtn').addEventListener('click', startGame);
+      document.getElementById('homeBtn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      startGame();
+    </script>
+  </body>
+</html>
