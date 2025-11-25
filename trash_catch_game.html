@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>분리수거 트럭 게임</title>
+    <style>
+      body {
+        margin: 0;
+        background: #ddd;
+        font-family: 'Noto Sans KR', sans-serif;
+        display: flex;
+        justify-content: center;
+      }
+
+      /* 게임 영역 */
+      #gameArea {
+        width: 1300px;
+        height: 850px;
+        background: url('image/game_background.png') no-repeat center/cover;
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        margin-top: 20px;
+      }
+
+      #score,
+      #timer {
+        position: absolute;
+        top: 15px;
+        font-size: 26px;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+      }
+      #score {
+        left: 20px;
+      }
+      #timer {
+        right: 20px;
+      }
+
+      /* 선택 UI */
+      #selectTrash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 28px;
+        z-index: 10;
+      }
+
+      .selectBtn {
+        padding: 12px 28px;
+        margin: 10px;
+        font-size: 22px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background: #fff;
+        color: #000;
+      }
+
+      /* 트럭 이미지 */
+      #truck {
+        width: 150px;
+        height: 80px;
+        position: absolute;
+        bottom: 100px;
+        left: 380px;
+        background: url('image/truck.png') no-repeat center/contain;
+      }
+
+      /* 쓰레기 이미지 */
+      .trash {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
+      /* 게임 종료 */
+      #gameOver {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 34px;
+        z-index: 20;
+      }
+
+      #restartBtn {
+        margin-top: 20px;
+        padding: 12px 20px;
+        background: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 22px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="gameArea">
+      <div id="score">점수: 0</div>
+      <div id="timer">30</div>
+      <div id="truck"></div>
+
+      <!-- 시작 전 선택 -->
+      <div id="selectTrash">
+        <div>어떤 쓰레기를 수거할까요?</div>
+        <button class="selectBtn" data-type="general">일반쓰레기</button>
+        <button class="selectBtn" data-type="glass">유리</button>
+        <button class="selectBtn" data-type="plastic">플라스틱</button>
+        <button class="selectBtn" data-type="styrofoam">스티로폼</button>
+        <button class="selectBtn" data-type="can">캔</button>
+        <button class="selectBtn" data-type="vinyl">비닐</button>
+        <button class="selectBtn" data-type="paper">종이</button>
+      </div>
+
+      <!-- 게임 종료 -->
+      <div id="gameOver">
+        <div id="finalScore">최종 점수: 0</div>
+        <button id="restartBtn">다시 시작</button>
+      </div>
+    </div>
+
+    <script>
+      const gameArea = document.getElementById('gameArea');
+      const truck = document.getElementById('truck');
+      const scoreEl = document.getElementById('score');
+      const timerEl = document.getElementById('timer');
+      const selectUI = document.getElementById('selectTrash');
+      const gameOverUI = document.getElementById('gameOver');
+      const finalScoreEl = document.getElementById('finalScore');
+
+      let score = 0;
+      let timeLeft = 30;
+      let truckX = 380;
+      let gameRunning = false;
+
+      /* 쓰레기 이미지 */
+      const trashFiles = {
+        general: ['image/tissue.png', 'image/bone.png'],
+        glass: ['image/glasscup.png', 'image/glassbottle.png'],
+        plastic: ['image/plasticbottle.png', 'image/plasticbin.png'],
+        styrofoam: ['image/styrofoam.png', 'image/styrofoambox.png'],
+        can: ['image/can.png', 'image/tincan.png'],
+        vinyl: ['image/vinyl.png', 'image/snack.png'],
+        paper: ['image/newspaper.png', 'image/paperbox.png'],
+      };
+
+      let targetType = null;
+
+      document.querySelectorAll('.selectBtn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          targetType = btn.dataset.type;
+          selectUI.style.display = 'none';
+          startGame();
+        });
+      });
+
+      function startGame() {
+        gameRunning = true;
+        startTimer();
+        spawnTrash();
+      }
+
+      /* 쓰레기 생성 */
+      function spawnTrash() {
+        if (!gameRunning) return;
+
+        const keys = Object.keys(trashFiles);
+        let type;
+
+        // 목표 쓰레기의 빈도를 높이기 (예: 40%)
+        if (Math.random() < 0.4) {
+          type = targetType; // 목표 쓰레기
+        } else {
+          // 나머지 60%는 랜덤 다른 쓰레기
+          const otherTypes = keys.filter((k) => k !== targetType);
+          type = otherTypes[Math.floor(Math.random() * otherTypes.length)];
+        }
+
+        const img =
+          trashFiles[type][Math.floor(Math.random() * trashFiles[type].length)];
+
+        const div = document.createElement('div');
+        div.classList.add('trash');
+        div.dataset.type = type;
+        div.style.backgroundImage = `url('${img}')`;
+        div.style.left = Math.random() * 1245 + 'px';
+        div.style.top = '-50px';
+
+        gameArea.appendChild(div);
+        fall(div);
+
+        setTimeout(spawnTrash, 1100);
+      }
+
+      /* 떨어지는 모션 */
+      function fall(trash) {
+        let speed = 2;
+
+        function move() {
+          if (!gameRunning) return;
+
+          let y = parseInt(trash.style.top);
+          let x = parseInt(trash.style.left);
+
+          trash.style.top = y + speed + 'px';
+
+          // 트럭 충돌 체크
+          const truckLeft = truckX;
+          const truckRight = truckX + 150; // 트럭 가로 크기
+          const truckTop = 750; // 트럭 세로 위치 (bottom: 100px)
+          const truckBottom = 830; // truck height 80px, bottom 100px
+
+          const trashLeft = x;
+          const trashRight = x + 80; // trash width 80px
+          const trashTop = y;
+          const trashBottom = y + 80;
+
+          // 충돌 조건
+          const isCollide =
+            trashRight > truckLeft &&
+            trashLeft < truckRight &&
+            trashBottom > truckTop &&
+            trashTop < truckBottom;
+
+          if (isCollide) {
+            if (trash.dataset.type === targetType) score += 10;
+            else score -= 5;
+
+            scoreEl.textContent = '점수: ' + score;
+            trash.remove();
+            return; // 충돌 시 삭제
+          }
+
+          if (y > 700) {
+            const trashX = parseInt(trash.style.left);
+
+            if (Math.abs(trashX - truckX) < 80) {
+              if (trash.dataset.type === targetType) score += 10;
+              else score -= 5;
+            } else {
+              if (trash.dataset.type === targetType) score -= 5;
+            }
+
+            scoreEl.textContent = '점수: ' + score;
+            trash.remove();
+            return;
+          }
+          requestAnimationFrame(move);
+        }
+        move();
+      }
+
+      /* === 부드러운 트럭 이동 === */
+      let leftPressed = false;
+      let rightPressed = false;
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') leftPressed = true;
+        if (e.key === 'ArrowRight') rightPressed = true;
+      });
+
+      document.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft') leftPressed = false;
+        if (e.key === 'ArrowRight') rightPressed = false;
+      });
+
+      function moveTruck() {
+        if (!gameRunning) {
+          requestAnimationFrame(moveTruck);
+          return;
+        }
+
+        if (leftPressed) truckX = Math.max(0, truckX - 5);
+        if (rightPressed) truckX = Math.min(1150, truckX + 5);
+
+        truck.style.left = truckX + 'px';
+
+        requestAnimationFrame(moveTruck);
+      }
+      moveTruck();
+
+      /* 타이머 */
+      function startTimer() {
+        const timer = setInterval(() => {
+          if (!gameRunning) {
+            clearInterval(timer);
+            return;
+          }
+
+          timeLeft--;
+          timerEl.textContent = timeLeft;
+
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            endGame();
+          }
+        }, 1000);
+      }
+
+      function endGame() {
+        gameRunning = false;
+        finalScoreEl.textContent = '최종 점수: ' + score;
+        gameOverUI.style.display = 'flex';
+      }
+
+      document.getElementById('restartBtn').onclick = () => location.reload();
+    </script>
+  </body>
+</html>
