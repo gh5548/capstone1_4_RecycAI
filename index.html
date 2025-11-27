@@ -36,14 +36,28 @@
         <!-- 검색 페이지 -->
         <section id="searchPage" class="page">
           <h2>올바른 분리수거 방법을 물어보세요.</h2>
-          <div class="search-box">
-            <input
-              type="text"
-              placeholder="무엇이든 물어보세요"
-              id="searchInput"
-            />
-            <button id="searchBtn">검색</button>
+
+          <!-- 대화창 + 입력창을 감싸는 래퍼 -->
+          <div class="chat-wrapper">
+            <!-- 대화가 쌓이는 부분 (초기엔 숨김) -->
+            <div
+              id="chatContainer"
+              class="chat-container"
+              style="display: none"
+            ></div>
+
+            <!-- 원래 검색창 (입력창) → 아래로 이동 -->
+            <div class="search-box chat-input-box">
+              <input
+                type="text"
+                placeholder="무엇이든 물어보세요"
+                id="searchInput"
+              />
+              <button id="searchBtn">검색</button>
+            </div>
           </div>
+
+          <!-- 기존 tip 영역 유지 -->
           <div class="tip">
             <span>👉</span> 음식물 묻은 스티로폼은 어디에 버릴까?
           </div>

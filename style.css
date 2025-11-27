@@ -370,3 +370,36 @@ header .logo img {
   overflow-y: auto;
   font-size: 16px;
 }
+
+/* ChatGPT 대화 UI */
+.chat-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 사용자 메시지 */
+.chat-msg.user {
+  align-self: flex-end;
+  background: #d6f5c3;
+  padding: 12px 14px;
+  border-radius: 14px 14px 0 14px;
+  font-size: 16px;
+  max-width: 70%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* AI 메시지 */
+.chat-msg.ai {
+  align-self: flex-start;
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: 14px 14px 14px 0;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  max-width: 70%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

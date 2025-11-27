@@ -362,3 +362,43 @@ function updateToolbar() {
 // 커서 이동 또는 선택 변경 시
 document.addEventListener('selectionchange', updateToolbar);
 
+// =========================
+// ChatGPT 스타일 검색 실행
+// =========================
+
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchInput');
+const chatContainer = document.getElementById('chatContainer');
+
+// AI 자동 답변 함수
+function getRecycleAnswer(question) {
+  return 'AI테스트용 답변입니다';
+}
+
+// 메시지 UI 생성 함수
+function addChatMessage(text, type) {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg ' + type;
+  msg.innerText = text;
+  chatContainer.appendChild(msg);
+}
+
+// 검색 버튼 클릭
+searchBtn.addEventListener('click', () => {
+  const question = searchInput.value.trim();
+  if (question === '') return;
+
+  // 대화 UI 나타나기
+  chatContainer.style.display = 'flex';
+
+  // 사용자 메시지 추가
+  addChatMessage(question, 'user');
+
+  // AI 메시지 추가
+  const answer = getRecycleAnswer(question);
+  setTimeout(() => {
+    addChatMessage(answer, 'ai');
+  }, 500);
+
+  searchInput.value = '';
+});
