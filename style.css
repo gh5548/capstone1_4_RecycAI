@@ -89,6 +89,10 @@ header .logo img {
   border-radius: 10px;
   padding: 40px;
   box-shadow: var(--shadow);
+
+  height: 700px; /* ← 메인 박스 높이 고정 (원하는 값으로 변경 가능) */
+  overflow-y: auto; /* ← 안쪽만 스크롤 */
+  box-sizing: border-box;
 }
 
 .main h2 {
@@ -373,12 +377,15 @@ header .logo img {
 
 /* ChatGPT 대화 UI */
 .chat-container {
+  display: none; /* 초기 숨김 */
   width: 100%;
   max-width: 900px;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 /* 사용자 메시지 */
@@ -402,4 +409,23 @@ header .logo img {
   border: 1px solid #ddd;
   max-width: 70%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* "..." typing indicator */
+.typing-indicator {
+  font-style: italic;
+  opacity: 0.7;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
 }

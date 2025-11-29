@@ -366,9 +366,7 @@ function updateToolbar() {
 // 커서 이동 또는 선택 변경 시
 document.addEventListener('selectionchange', updateToolbar);
 
-// =========================
-// ChatGPT 스타일 검색 실행
-// =========================
+// 채팅
 
 const searchBtn = document.getElementById('searchBtn');
 const searchInput = document.getElementById('searchInput');
@@ -376,7 +374,7 @@ const chatContainer = document.getElementById('chatContainer');
 
 // AI 자동 답변 함수
 function getRecycleAnswer(question) {
-  return 'AI테스트용 답변입니다';
+  return 'AI 테스트용 답변입니다.';
 }
 
 // 메시지 UI 생성 함수
@@ -384,7 +382,38 @@ function addChatMessage(text, type) {
   const msg = document.createElement('div');
   msg.className = 'chat-msg ' + type;
   msg.innerText = text;
+
   chatContainer.appendChild(msg);
+
+  // 항상 스크롤 맨 아래로
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  return msg;
+}
+
+// 타자 치는 효과
+function typeWriterEffect(element, text, speed = 30) {
+  let index = 0;
+  const interval = setInterval(() => {
+    element.innerText = text.substring(0, index++);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    if (index > text.length) {
+      clearInterval(interval);
+    }
+  }, speed);
+}
+
+// "..." typing 표시
+function showTypingIndicator() {
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg ai typing-indicator';
+  typing.innerText = '...';
+  chatContainer.appendChild(typing);
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  return typing;
 }
 
 // 검색 버튼 클릭
@@ -398,11 +427,21 @@ searchBtn.addEventListener('click', () => {
   // 사용자 메시지 추가
   addChatMessage(question, 'user');
 
-  // AI 메시지 추가
+  // typing 표시 추가
+  const indicator = showTypingIndicator();
+
   const answer = getRecycleAnswer(question);
+
+  // typing → 타자 효과 전환
   setTimeout(() => {
-    addChatMessage(answer, 'ai');
-  }, 500);
+    indicator.remove(); // "..." 삭제
+
+    // AI 말풍선 생성 (비어있게)
+    const aiMsg = addChatMessage('', 'ai');
+
+    // 타자효과 시작
+    typeWriterEffect(aiMsg, answer, 25);
+  }, 800);
 
   searchInput.value = '';
 });
