@@ -445,3 +445,10 @@ searchBtn.addEventListener('click', () => {
 
   searchInput.value = '';
 });
+// Enter 키 입력 시 검색
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    // Enter 키일 때
+    searchBtn.click(); // 검색 버튼 클릭 이벤트 실행
+  }
+});
