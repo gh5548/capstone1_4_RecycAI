@@ -39,16 +39,20 @@ function showPage(pageId) {
 }
 
 Object.entries(navButtons).forEach(([key, btn]) => {
-  const targetPage =
-    key === 'Logo'
-      ? 'searchPage'
-      : key === 'shop'
-      ? 'shopPage'
-      : key === 'game'
-      ? 'gamePage'
-      : 'communityPage';
-
-  btn.addEventListener('click', () => showPage(targetPage));
+  btn.addEventListener('click', () => {
+    if (key === 'Logo') {
+      // 로고 클릭 시 새로고침
+      location.reload();
+    } else {
+      const targetPage =
+        key === 'shop'
+          ? 'shopPage'
+          : key === 'game'
+          ? 'gamePage'
+          : 'communityPage';
+      showPage(targetPage);
+    }
+  });
 });
 
 window.addEventListener('load', () => showPage('searchPage'));
