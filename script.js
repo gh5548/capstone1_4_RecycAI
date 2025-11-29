@@ -427,6 +427,10 @@ searchBtn.addEventListener('click', () => {
   // 사용자 메시지 추가
   addChatMessage(question, 'user');
 
+  // 🔒 AI 입력 중일 때 입력창과 버튼 비활성화
+  searchInput.disabled = true;
+  searchBtn.disabled = true;
+
   // typing 표시 추가
   const indicator = showTypingIndicator();
 
@@ -439,8 +443,12 @@ searchBtn.addEventListener('click', () => {
     // AI 말풍선 생성 (비어있게)
     const aiMsg = addChatMessage('', 'ai');
 
-    // 타자효과 시작
-    typeWriterEffect(aiMsg, answer, 25);
+    typeWriterEffect(aiMsg, answer, 25, () => {
+      // 🟢 타자 끝나면 입력창과 버튼 다시 활성화
+      searchInput.disabled = false;
+      searchBtn.disabled = false;
+      searchInput.focus(); // 입력창 포커스
+    });
   }, 800);
 
   searchInput.value = '';
@@ -452,3 +460,17 @@ searchInput.addEventListener('keydown', (e) => {
     searchBtn.click(); // 검색 버튼 클릭 이벤트 실행
   }
 });
+
+function typeWriterEffect(element, text, speed = 30, callback) {
+  let index = 0;
+  const interval = setInterval(() => {
+    element.innerText = text.substring(0, index++);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    if (index > text.length) {
+      clearInterval(interval);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      if (callback) callback(); // 타자 끝나면 콜백 실행
+    }
+  }, speed);
+}
