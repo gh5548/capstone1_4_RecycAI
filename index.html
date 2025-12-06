@@ -29,6 +29,7 @@
         <button id="communityBTN">💬 커뮤니티</button>
         <button>❓ 고객센터</button>
         <button id="gameBTN">🎮 게임</button>
+        <button id="attendanceBTN">📅 출석체크</button>
       </aside>
 
       <!-- 메인 컨텐츠 -->
@@ -229,7 +230,24 @@
                 style="width: 100%; height: auto"
               />
             </div>
-            <div class="game-card"><h3>game3</h3></div>
+          </div>
+        </section>
+        <!-- 출석 체크 페이지 -->
+        <section id="attendancePage" class="page" style="display: none">
+          <h2>📅 출석 체크</h2>
+
+          <div class="attendance-wrapper">
+            <!-- 출석 정보 텍스트 -->
+            <p class="attendance-info">
+              이번 달 출석일수: <span id="attendanceCount">0</span>일
+            </p>
+
+            <!-- 출석 보상 28칸 -->
+            <div class="attendance-grid" id="attendanceGrid"></div>
+
+            <button id="attendanceCheckBtn" class="attendance-btn">
+              출석하기
+            </button>
           </div>
         </section>
       </main>

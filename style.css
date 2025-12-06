@@ -1,6 +1,6 @@
-/* ==========================
-공통 스타일
-========================== */
+/* =========================================================
+   공통 변수
+========================================================= */
 :root {
   --color-primary: #00bcd4;
   --color-secondary: #4caf50;
@@ -17,16 +17,16 @@ body {
   background-color: var(--color-light);
 }
 
-/* ==========================
-헤더
-========================== */
+/* =========================================================
+   헤더
+========================================================= */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
+  background: #fff;
   border-bottom: 1px solid var(--color-border);
-  background-color: #fff;
 }
 
 header .logo img {
@@ -47,14 +47,13 @@ header .logo img {
 .header-buttons .login {
   background: #077bff;
 }
-
 .header-buttons .mypage {
   background: #00c4cc;
 }
 
-/* ==========================
-레이아웃
-========================== */
+/* =========================================================
+   레이아웃
+========================================================= */
 .container {
   display: flex;
   margin-top: 20px;
@@ -75,13 +74,14 @@ header .logo img {
   padding: 12px;
   background: var(--color-primary);
   color: #fff;
-  font-weight: bold;
   font-size: 15px;
+  font-weight: bold;
   border-radius: var(--radius);
   border: none;
   cursor: pointer;
 }
 
+/* 메인 */
 .main {
   flex: 1;
   margin-left: 20px;
@@ -89,9 +89,8 @@ header .logo img {
   border-radius: 10px;
   padding: 40px;
   box-shadow: var(--shadow);
-
-  height: 700px; /* ← 메인 박스 높이 고정 (원하는 값으로 변경 가능) */
-  overflow-y: auto; /* ← 안쪽만 스크롤 */
+  height: 700px;
+  overflow-y: auto;
   box-sizing: border-box;
 }
 
@@ -100,9 +99,9 @@ header .logo img {
   margin-bottom: 20px;
 }
 
-/* ==========================
-검색 박스
-========================== */
+/* =========================================================
+   검색 박스
+========================================================= */
 .search-box {
   display: flex;
   justify-content: center;
@@ -121,8 +120,8 @@ header .logo img {
 
 .search-box button {
   padding: 12px 18px;
-  border-radius: 20px;
   border: none;
+  border-radius: 20px;
   background: var(--color-accent);
   cursor: pointer;
   font-weight: bold;
@@ -130,8 +129,8 @@ header .logo img {
 
 .tip {
   text-align: center;
-  color: #555;
   font-size: 14px;
+  color: #555;
   margin-top: 15px;
 }
 
@@ -140,9 +139,9 @@ header .logo img {
   margin-right: 6px;
 }
 
-/* ==========================
-포인트 상점
-========================== */
+/* =========================================================
+   포인트 상점
+========================================================= */
 .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -165,8 +164,8 @@ header .logo img {
 }
 
 .item-card h3 {
-  margin: 10px 0;
   font-size: 1rem;
+  margin: 10px 0;
 }
 
 .price {
@@ -188,9 +187,9 @@ header .logo img {
   background: #29b6f6;
 }
 
-/* ==========================
-게임
-========================== */
+/* =========================================================
+   게임
+========================================================= */
 .game-grid {
   display: flex;
   justify-content: center;
@@ -204,12 +203,11 @@ header .logo img {
   background: #fff;
   border-radius: 18px;
   box-shadow: var(--shadow);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .game-card:hover {
@@ -221,18 +219,16 @@ header .logo img {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  margin-top: 10px;
 }
 
 .game-card h3 {
   font-size: 18px;
-  color: #333;
   margin: 15px 0 10px;
 }
 
-/* ==========================
-커뮤니티
-========================== */
+/* =========================================================
+   커뮤니티
+========================================================= */
 .write-btn-box {
   text-align: right;
   margin-bottom: 15px;
@@ -242,18 +238,16 @@ header .logo img {
   background: var(--color-secondary);
   color: #fff;
   padding: 10px 16px;
-  font-weight: bold;
   border-radius: var(--radius);
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 .write-btn-box button:hover {
   background: #43a047;
 }
 
-/* 게시판 테이블 */
+/* 테이블 */
 .community-table {
   width: 100%;
   border-collapse: collapse;
@@ -262,15 +256,15 @@ header .logo img {
 }
 
 .community-table th {
-  background: #f1f1f1;
   padding: 10px;
+  background: #f1f1f1;
   border-bottom: 2px solid var(--color-border);
 }
 
 .community-table td {
   padding: 10px;
-  border-bottom: 1px solid #eee;
   text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
 .community-table td.title {
@@ -301,19 +295,19 @@ header .logo img {
   color: #ff9800;
 }
 
-/* ==========================
-페이지네이션
-========================== */
+/* =========================================================
+   페이지네이션
+========================================================= */
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   gap: 8px;
+  margin-top: 20px;
 }
 
 .pagination button {
-  border: 1px solid #ccc;
   background: #fff;
+  border: 1px solid #ccc;
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
@@ -330,88 +324,79 @@ header .logo img {
   cursor: not-allowed;
 }
 
-/* ==========================
-글쓰기 툴바 및 편집기
-========================== */
+/* =========================================================
+   글쓰기 에디터
+========================================================= */
 .editor-toolbar {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
   gap: 6px;
   background: #f1f1f1;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 6px 6px 0 0;
-  padding: 6px;
 }
 
-.editor-toolbar button {
-  background: #eee;
-  border: 1px solid #ccc;
+.editor-toolbar button,
+.editor-toolbar select,
+.editor-toolbar input[type='color'] {
   padding: 4px 8px;
+  border: 1px solid #ccc;
+  background: #eee;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .editor-toolbar button:hover {
   background: #ddd;
 }
 
-.editor-toolbar select,
-.editor-toolbar input[type='color'] {
-  border: 1px solid #ccc;
-  padding: 3px;
-  border-radius: 4px;
-}
-
 .editor {
+  background: #fff;
+  min-height: 250px;
+  max-height: 400px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-top: none;
   border-radius: 0 0 6px 6px;
-  background: #fff;
-  padding: 10px;
-  min-height: 250px;
-  max-height: 400px;
   overflow-y: auto;
   font-size: 16px;
 }
 
-/* ChatGPT 대화 UI */
+/* =========================================================
+   ChatGPT 대화 UI
+========================================================= */
 .chat-container {
-  display: none; /* 초기 숨김 */
   width: 100%;
   max-width: 900px;
   margin: 20px auto;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 12px;
   max-height: 400px;
   overflow-y: auto;
 }
 
-/* 사용자 메시지 */
+.chat-msg {
+  max-width: 70%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  box-shadow: var(--shadow);
+}
+
 .chat-msg.user {
   align-self: flex-end;
   background: #d6f5c3;
-  padding: 12px 14px;
   border-radius: 14px 14px 0 14px;
-  font-size: 16px;
-  max-width: 70%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* AI 메시지 */
 .chat-msg.ai {
   align-self: flex-start;
-  background: #ffffff;
-  padding: 12px 14px;
-  border-radius: 14px 14px 14px 0;
-  font-size: 16px;
+  background: #fff;
   border: 1px solid #ddd;
-  max-width: 70%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 14px 14px 14px 0;
 }
 
-/* "..." typing indicator */
 .typing-indicator {
   font-style: italic;
   opacity: 0.7;
@@ -419,13 +404,127 @@ header .logo img {
 }
 
 @keyframes blink {
-  0% {
+  0%,
+  100% {
     opacity: 0.2;
   }
   50% {
     opacity: 1;
   }
-  100% {
-    opacity: 0.2;
-  }
+}
+
+/* =========================================================
+   출석 체크 페이지
+========================================================= */
+.attendance-wrapper {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.attendance-info {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* 달력 */
+.attendance-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.attendance-cell {
+  padding: 12px;
+  border-radius: 10px;
+  background: #f8f8f8;
+  border: 2px solid #ddd;
+  transition: 0.2s;
+  font-size: 15px;
+  text-align: center;
+}
+.attendance-cell .day-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* 날짜와 포인트를 세로로 배치 */
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f8f8f8;
+  border: 2px solid #ddd;
+}
+
+.attendance-cell.checked {
+  background: #3b82f6;
+  border-color: #1d4ed8;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 버튼 */
+.attendance-btn {
+  padding: 12px 20px;
+  background: #4c9aff;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.attendance-btn:hover {
+  background: #3b82f6;
+}
+
+/* 출석 보상 */
+.reward-info {
+  margin-top: 12px;
+  padding: 12px;
+  background: #e8f1ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+/* 보상 텍스트 */
+.day-btn {
+  position: relative;
+  font-size: 16px;
+}
+
+.day-btn .reward-text {
+  position: absolute;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ff9800;
+}
+
+.day-btn.active {
+  background: #4677f5;
+  color: #fff;
+  border-color: #3b6bef;
+}
+
+.day-btn.active .reward-text {
+  color: #ff9800;
+}
+.attendance-cell .reward-text {
+  position: absolute;
+  bottom: 0px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #ff9800;
+}
+.attendance-cell {
+  position: relative;
 }
