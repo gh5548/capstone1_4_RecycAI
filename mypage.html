@@ -111,14 +111,14 @@
           <h3>내 정보</h3>
           <ul class="info-list">
             <li><strong>아이디:</strong> <span id="userId"></span></li>
-            <li><strong>가입일:</strong> 2025-11-3</li>
-            <li><strong>최근 로그인:</strong> 오늘</li>
+            <li><strong>가입일:</strong> <span id="joinDate">2025-11-3</span></li>
+            <li><strong>최근 로그인:</strong> <span id="lastLogin">오늘</span></li>
           </ul>
         </div>
 
         <div class="info-box">
           <h3>최근 활동</h3>
-          <ul class="info-list">
+          <ul class="info-list" id="recentList">
             <li>커뮤니티 글 작성: “분리수거 꿀팁 공유!”</li>
             <li>포인트 상점에서 “재활용 봉투” 교환</li>
             <li>게임 “분리수거 챌린지” 2등 달성</li>
@@ -126,6 +126,60 @@
         </div>
       </div>
     </main>
+
+    <script>
+      (async function () {
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+          alert("로그인이 필요합니다.");
+          location.href = "login.html";
+          return;
+        }
+
+        try {
+          const res = await fetch(`/user/me?user_id=${encodeURIComponent(userId)}`);
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+
+          // 기본 정보 표시
+          document.getElementById("userName").textContent = data.nickname || "사용자";
+          document.getElementById("userId").textContent = data.email || "-";
+          document.getElementById("userPoint").textContent = data.point ?? 0;
+          document.getElementById("joinDate").textContent = data.joined_at || "-";
+          document.getElementById("lastLogin").textContent = data.last_login || "-";
+
+          // 최근 활동 표시
+          const list = document.getElementById("recentList");
+          list.innerHTML = "";
+          if (data.recent_posts && data.recent_posts.length > 0) {
+            data.recent_posts.forEach(p => {
+              const li = document.createElement("li");
+              li.textContent = `커뮤니티 글: “${p.title}” (${p.created_at})`;
+              list.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.textContent = "최근 활동이 없습니다.";
+            list.appendChild(li);
+          }
+
+          // 로그아웃 기능
+          const logout = () => {
+            localStorage.removeItem("userId");
+            localStorage.removeItem("loginUser");
+            localStorage.removeItem("nickname");
+            alert("로그아웃되었습니다.");
+            location.href = "index.html";
+          };
+          document.getElementById("logoutBtn").addEventListener("click", logout);
+          document.getElementById("logoutBtn2").addEventListener("click", logout);
+
+        } catch (err) {
+          console.error(err);
+          alert("마이페이지 데이터를 불러오는 중 오류가 발생했습니다.");
+        }
+      })();
+    </script>
 
   </body>
 </html>

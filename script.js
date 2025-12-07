@@ -18,9 +18,9 @@
       shop: $('#shopBTN'),
       game: $('#gameBTN'),
       community: $('#communityBTN'),
+      attendance: $('#attendanceBTN'),
     },
     userPointEl: $('#userPoint'),
-    userPoint: 1250,
     // community
     writePostBtn: $('#writePostBtn'),
     postList: $('#postList'),
@@ -41,7 +41,6 @@
     searchBtn: $('#searchBtn'),
     searchInput: $('#searchInput'),
     chatContainer: $('#chatContainer'),
-    // shop
     // attendance
     attendanceBTN: $('#attendanceBTN'),
     attendancePage: $('#attendancePage'),
@@ -68,6 +67,88 @@
   }
 
   /* ======================
+     로그인/유틸
+  ====================== */
+  function getLoginUserId() {
+    return localStorage.getItem('userId');
+  }
+  function requireLogin() {
+    const uid = getLoginUserId();
+    if (!uid) {
+      alert('로그인이 필요합니다.');
+      location.href = 'login.html';
+      return null;
+    }
+    return uid;
+  }
+
+  /* ======================
+     상점(포인트 교환) 서버 연동
+  ====================== */
+  async function refreshPoint() {
+    const userPointEl = state.userPointEl;
+    if (!guard(userPointEl)) return;
+    const userId = getLoginUserId();
+    if (!userId) {
+      userPointEl.textContent = '0';
+      return;
+    }
+    try {
+      const res = await fetch(`/shop/point?user_id=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      userPointEl.textContent = data.point ?? 0;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  let redeemBound = false;
+  function bindRedeemButtons() {
+    if (redeemBound) return;
+    redeemBound = true;
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.exchange-btn');
+      if (!btn) return;
+
+      const userId = requireLogin();
+      if (!userId) return;
+
+      const itemCard = btn.closest('.item-card');
+      if (!itemCard) return;
+      const price = parseInt(itemCard.dataset.price || '0', 10);
+      const name = itemCard.dataset.name || '상품';
+
+      if (!confirm(`'${name}'을(를) ${price}P로 교환하시겠습니까?`)) return;
+
+      try {
+        const res = await fetch(
+          `/shop/redeem?user_id=${encodeURIComponent(userId)}&price=${price}&item_name=${encodeURIComponent(name)}`,
+          { method: 'POST' }
+        );
+        if (!res.ok) {
+          let msg = '알 수 없는 오류가 발생했습니다.';
+          try {
+            const j = await res.json();
+            msg = j.detail || JSON.stringify(j);
+          } catch {
+            msg = await res.text();
+          }
+          throw new Error(msg);
+        }
+        alert(`${name} 교환 완료!`);
+        await refreshPoint();
+      } catch (err) {
+        if (String(err.message).includes('Method Not Allowed')) {
+          alert('교환 실패: 요청 방법이 올바르지 않습니다.');
+        } else {
+          alert('교환 실패: ' + err.message);
+        }
+      }
+    });
+  }
+
+  /* ======================
      내비게이션 초기화
   ====================== */
   function initNavigation() {
@@ -82,9 +163,14 @@
           shop: 'shopPage',
           game: 'gamePage',
           community: 'communityPage',
+          attendance: 'attendancePage',
         };
         const targetPage = map[key] || 'searchPage';
         showPageById(targetPage);
+        if (key === 'shop') {
+          refreshPoint();
+          bindRedeemButtons();
+        }
       });
     });
 
@@ -96,28 +182,9 @@
      상점(포인트 교환) 초기화
   ====================== */
   function initShop() {
-    const userPointEl = state.userPointEl;
-    if (!guard(userPointEl)) return;
-    userPointEl.textContent = state.userPoint;
-
-    // 이벤트 위임: exchange-btn 클릭 처리
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.exchange-btn');
-      if (!btn) return;
-      const itemCard = btn.closest('.item-card');
-      if (!itemCard) return;
-      const price = parseInt(itemCard.dataset.price || '0', 10);
-      const name = itemCard.dataset.name || '상품';
-
-      if (state.userPoint < price) {
-        alert('포인트가 부족합니다.');
-        return;
-      }
-
-      state.userPoint -= price;
-      userPointEl.textContent = state.userPoint;
-      alert(`${name} 교환 완료!`);
-    });
+    if (!guard(state.userPointEl)) return;
+    refreshPoint();
+    bindRedeemButtons();
   }
 
   /* ======================
@@ -242,11 +309,6 @@
       editor.focus();
     }
 
-    // 툴바 버튼들을 data-command 속성으로 바꾸는게 이상적이지만
-    // 기존 HTML에 onclick으로 연결한 버튼들이 있다면 fallback 처리
-    // (ex) <button onclick="format('bold')">Bold</button>
-    // 가능하면 HTML 개선 권장
-
     // 글자 크기 변경
     if (guard(fontSizeSelect)) {
       fontSizeSelect.addEventListener('change', (e) => {
@@ -295,7 +357,7 @@
       });
     }
 
-    // 키 입력 처리 (커스텀 입력: 스타일 유지)
+    // 키 입력 처리
     editor.addEventListener('keydown', (e) => {
       const allowed = new Set([
         'Enter',
@@ -366,7 +428,7 @@
       selection.addRange(newRange);
     });
 
-    // 툴바 상태 업데이트 (볼드/이탤릭 등)
+    // 툴바 상태 업데이트
     const findToolbarBtn = (command) =>
       document.querySelector(`button[onclick*="${command}"]`) ||
       document.querySelector(`button[data-command="${command}"]`);
@@ -391,11 +453,10 @@
           document.queryCommandState('underline')
         );
 
-      // 글자 크기/색상 동기화 (간단한 parent 스타일 읽기)
       let fontSize =
-        (fontSizeSelect && fontSizeSelect.value) || currentFontSize;
+        (state.fontSizeSelect && state.fontSizeSelect.value) || currentFontSize;
       let fontColor =
-        (fontColorInput && fontColorInput.value) || currentFontColor;
+        (state.fontColorInput && state.fontColorInput.value) || currentFontColor;
 
       if (!sel.isCollapsed) {
         const range = sel.getRangeAt(0);
@@ -406,13 +467,13 @@
         }
       }
 
-      if (fontSizeSelect) fontSizeSelect.value = fontSize;
-      if (fontColorInput) fontColorInput.value = fontColor;
+      if (state.fontSizeSelect) state.fontSizeSelect.value = fontSize;
+      if (state.fontColorInput) state.fontColorInput.value = fontColor;
     }
 
     document.addEventListener('selectionchange', updateToolbar);
 
-    // expose execFormat globally for existing HTML buttons using onclick="format('bold')"
+    // expose
     window.format = execFormat;
   }
 
@@ -424,7 +485,6 @@
     if (!guard(searchBtn) || !guard(searchInput) || !guard(chatContainer))
       return;
 
-    // 간단한 답변(원래 함수 유지)
     function getRecycleAnswer(question) {
       return 'AI 테스트용 답변입니다.';
     }
@@ -438,7 +498,6 @@
       return msg;
     }
 
-    // typing indicator
     function showTypingIndicator() {
       const typing = document.createElement('div');
       typing.className = 'chat-msg ai typing-indicator';
@@ -448,7 +507,6 @@
       return typing;
     }
 
-    // unified typeWriterEffect with callback
     function typeWriterEffect(element, text, speed = 30, callback) {
       let i = 0;
       const id = setInterval(() => {
@@ -461,7 +519,6 @@
       }, speed);
     }
 
-    // 검색 동작
     searchBtn.addEventListener('click', () => {
       const question = (searchInput.value || '').trim();
       if (!question) return;
@@ -469,7 +526,6 @@
       chatContainer.style.display = 'flex';
       addChatMessage(question, 'user');
 
-      // disable while AI "typing"
       searchInput.disabled = true;
       searchBtn.disabled = true;
 
@@ -484,11 +540,10 @@
           searchBtn.disabled = false;
           searchInput.focus();
         });
-      }, 600); // typing duration
+      }, 600);
       searchInput.value = '';
     });
 
-    // Enter 로 제출
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') searchBtn.click();
     });
@@ -506,13 +561,11 @@
 
     if (!gridEl && !calendarEl) return;
 
-    // point rewards (index 0 => day 1)
     const pointRewards = [
       10, 10, 10, 10, 10, 10, 30, 15, 15, 15, 15, 15, 15, 45, 20, 20, 20, 20,
       20, 20, 60, 25, 25, 25, 25, 25, 25, 75,
     ];
 
-    // 보상 맵 (연속 출석 횟수 기준)
     const attendanceRewards = {
       3: '20P',
       5: '30P',
@@ -523,10 +576,9 @@
       28: '500P!',
     };
 
-    // 날짜 기준 자동 초기화
     function loadAttendance() {
-      const lastCheckDate = localStorage.getItem('lastCheckDate'); // yyyy-mm-dd
-      const todayDate = new Date().toISOString().split('T')[0]; // 오늘 날짜
+      const lastCheckDate = localStorage.getItem('lastCheckDate');
+      const todayDate = new Date().toISOString().split('T')[0];
       if (lastCheckDate !== todayDate) {
         localStorage.setItem('attendanceDays', JSON.stringify([]));
         localStorage.setItem('lastCheckDate', todayDate);
@@ -542,7 +594,6 @@
       );
     }
 
-    // 렌더 (그리드)
     function renderGrid() {
       if (!gridEl) return;
       const days = loadAttendance();
@@ -553,10 +604,8 @@
         cell.dataset.day = String(i);
         cell.textContent = i;
 
-        // 체크 표시
         if (days.includes(i)) cell.classList.add('checked');
 
-        // 포인트 태그
         if (pointRewards[i - 1] !== undefined) {
           const tag = document.createElement('div');
           tag.className = 'reward-text';
@@ -569,7 +618,6 @@
       if (countEl) countEl.textContent = days.length;
     }
 
-    // 렌더 (캘린더 버튼형)
     function renderCalendar() {
       if (!calendarEl) return;
       const days = loadAttendance();
@@ -594,7 +642,6 @@
       }
     }
 
-    // 오늘 날짜 기준으로 출석 체크
     function checkTodayAttendance() {
       const today = new Date().getDate();
       if (today > totalDays) {
@@ -609,7 +656,6 @@
       days.push(today);
       saveAttendance(days);
 
-      // 보상 계산
       const count = days.length;
       const rewardText = attendanceRewards[count]
         ? `${attendanceRewards[count]} + 기본 ${pointRewards[today - 1]}P`
@@ -621,25 +667,19 @@
       alert(`출석 완료!\n오늘 보상: ${rewardText}`);
     }
 
-    // 캘린더 버튼 클릭 이벤트 (보기 전용)
     if (calendarEl) {
       calendarEl.addEventListener('click', (e) => {
         const btn = e.target.closest('.day-btn');
         if (!btn) return;
-        const day = Number(btn.dataset.day);
-        if (!day) return;
-        alert(`Day ${day} 정보\n포인트: ${pointRewards[day - 1] ?? 0}p`);
       });
     }
 
-    // 출석 페이지로 이동
     if (state.attendanceBTN) {
       state.attendanceBTN.addEventListener('click', () => {
         showPageById('attendancePage');
       });
     }
 
-    // 출석하기 버튼
     if (state.attendanceCheckBtn) {
       state.attendanceCheckBtn.addEventListener('click', checkTodayAttendance);
     }
@@ -648,7 +688,6 @@
       state.checkAttendanceBtn.addEventListener('click', checkTodayAttendance);
     }
 
-    // 초기 렌더
     renderGrid();
     renderCalendar();
   }
