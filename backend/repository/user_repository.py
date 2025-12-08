@@ -1,9 +1,9 @@
 import mysql.connector
-from config import DB_CONFIG
+from config import get_connection
 from datetime import datetime
 
 def get_user_by_email(email: str):
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SET NAMES utf8mb4")  # utf8mb4: db로 옮길때 한글 자꾸 깨져서 추가했습니다
     cursor.execute(
@@ -21,7 +21,7 @@ def create_user(user: dict):
     # 비밀번호 해싱
     hashed_pw = bcrypt.hashpw(user['password'].encode('utf-8'), bcrypt.gensalt())
 
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cursor = conn.cursor()
     cursor.execute("SET NAMES utf8mb4")
     sql = """
@@ -50,7 +50,7 @@ def create_user(user: dict):
 
 # 로그인 성공 시 최근 로그인 시간 갱신
 def update_last_login(user_id: int):
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cursor = conn.cursor()
     cursor.execute("UPDATE user_tb SET last_login = NOW() WHERE user_id = %s", (user_id,))
     conn.commit()
@@ -59,7 +59,7 @@ def update_last_login(user_id: int):
 
 # 마이페이지용 사용자 정보 조회
 def get_user_by_id(user_id: int):
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SET NAMES utf8mb4")
     cursor.execute("""
@@ -76,7 +76,7 @@ def get_user_by_id(user_id: int):
 
 # 마이페이지용 최근 활동 조회
 def get_recent_posts_by_user(user_id: int, limit: int = 5):
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SET NAMES utf8mb4")
     cursor.execute("""
@@ -93,7 +93,7 @@ def get_recent_posts_by_user(user_id: int, limit: int = 5):
 
 # 현재 포인트 조회
 def get_point(user_id: int) -> int:
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cur = conn.cursor()
     cur.execute("SELECT point FROM user_tb WHERE user_id=%s AND deleted_at='9999-12-31 23:59:59'", (user_id,))
     row = cur.fetchone()
@@ -103,7 +103,7 @@ def get_point(user_id: int) -> int:
 
 # 포인트 차감
 def redeem_point(user_id: int, price: int) -> bool:
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(**get_connection)
     cur = conn.cursor()
     try:
         # 포인트가 충분한 경우에만 차감

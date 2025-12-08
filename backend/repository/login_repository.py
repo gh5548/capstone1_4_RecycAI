@@ -1,5 +1,5 @@
 import mysql.connector
-from config import DB_CONFIG
+from config import get_connection
 
 def get_user_for_login(email: str):
     conn = mysql.connector.connect(**DB_CONFIG)
