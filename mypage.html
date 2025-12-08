@@ -128,6 +128,12 @@
             <li>게임 “분리수거 챌린지” 2등 달성</li>
           </ul>
         </div>
+        <div class="info-box">
+          <h3>구매 내역</h3>
+          <ul class="info-list" id="purchaseList">
+            <li>구매 내역이 없습니다.</li>
+          </ul>
+        </div>
       </div>
     </main>
 
@@ -189,6 +195,26 @@
         } catch (err) {
           console.error(err);
           alert('마이페이지 데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+
+        // 구매 내역 표시
+        const purchaseList = document.getElementById('purchaseList');
+        purchaseList.innerHTML = '';
+
+        const purchaseHistory = JSON.parse(
+          localStorage.getItem('purchaseHistory') || '[]'
+        );
+
+        if (purchaseHistory.length > 0) {
+          purchaseHistory.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - ${item.price}P (${item.date})`;
+            purchaseList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement('li');
+          li.textContent = '구매 내역이 없습니다.';
+          purchaseList.appendChild(li);
         }
       })();
     </script>
