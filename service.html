@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>고객센터 - 분리수거 도우미</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- 상단 헤더 -->
+    <header>
+      <div class="logo">
+        <img src="image/logo.png" alt="로고" id="Logo" />
+      </div>
+      <div class="header-buttons">
+        <button class="login" onclick="location.href='login.html'">로그인</button>
+        <button class="mypage" onclick="location.href='mypage.html'">
+          마이페이지
+        </button>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- 왼쪽 사이드바 -->
+      <aside class="sidebar">
+        <button onclick="location.href='shop.html'">🛒 포인트상점</button>
+        <button onclick="location.href='index.html'">💬 커뮤니티</button>
+        <button class="active">❓ 고객센터</button>
+        <button onclick="location.href='game.html'">🎮 게임</button>
+      </aside>
+
+      <!-- 메인 영역 -->
+      <main class="main">
+        <h2>❓ 고객센터</h2>
+
+        <!-- ⭐ 커뮤니티와 동일한 규격의 흰색 박스 -->
+        <div class="community-box">
+          <table class="community-table">
+            <thead>
+              <tr>
+                <th style="width: 120px">분류</th>
+                <th>내용</th>
+                <th style="width: 160px">등록일</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>FAQ</td>
+                <td>회원가입은 어떻게 하나요?</td>
+                <td>2025-11-10</td>
+              </tr>
+
+              <tr>
+                <td>FAQ</td>
+                <td>포인트는 어디에서 사용할 수 있나요?</td>
+                <td>2025-11-11</td>
+              </tr>
+
+              <tr>
+                <td>문의</td>
+                <td>플라스틱 분류 기준을 알고 싶어요.</td>
+                <td>2025-11-12</td>
+              </tr>
+
+              <tr>
+                <td>문의</td>
+                <td>게임 포인트가 적립되지 않아요.</td>
+                <td>2025-11-13</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- 1:1 문의 버튼 (오른쪽 상단 위치) -->
+          <div style="text-align: right; margin-top: 15px">
+            <button
+              style="
+                background: #2ecc71;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 5px;
+                border: none;
+                cursor: pointer;
+              "
+              onclick="location.href='inquiry.html'"
+            >
+              📝 1:1 문의
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
